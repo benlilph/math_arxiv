@@ -12,6 +12,11 @@ import pandas as pd
 import numpy as np
 import bibtexparser
 
+'''
+Following https://nbviewer.jupyter.org/url/betatim.github.io//downloads/notebooks/arXiv.ipynb by TimHead
+
+'''
+
 pd.set_option('mode.chained_assignment', 'warn')
 
 
