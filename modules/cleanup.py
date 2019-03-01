@@ -16,6 +16,8 @@ class cleanup(object):
         
         subst = ""
         
+        test_str=re.sub(r"\n", " ", test_str, 0, re.MULTILINE)
+        
         result = re.sub(regex, subst, test_str, 0, re.MULTILINE)
         
         return result
@@ -24,25 +26,21 @@ class cleanup(object):
     def delete_stopword_mathsymbols(cls, text):
         temp = []
         stop = stopwords.words('english')
-        for x in word_tokenize(text):
-            if x.lower() in stop or len(x) == 1 or x.isdigit() or ("\\" in x) or ("^" in x):
+        for x in text.split(" "):
+            if x.lower() in stop or len(x) <3 or x.isdigit() or ("\\" in x) or ("^" in x) or ("[" in x) or ("]" in x):
                 continue
-            
-            temp += [x.lower()]
-        return temp
+            x=x.lower()
+            x=re.sub(r"[!@#$%^&*()_+=-`~'\-\d.]", "", x, 0, re.MULTILINE)
+            if x not in stop:
+                temp += [x]
+    
+    
+        return " ".join(temp)
+    
     
     @classmethod
-    def delete_double_digit(cls, tokens):
-        # given a token , if it contains more than 2 numbers , then probably it is useless
-        empty = []
-        num_pat = re.compile(r'[0-9][0-9]')
-        for x in tokens:
-            if len(num_pat.findall(x)) == 0:
-                empty += [x]
-        return empty
-    
-    @classmethod
-    def stem_words(cls, tokens):
+    def stem_words(cls, text):
+        tokens=word_tokenize(text)
         stemmer = PorterStemmer()
         #pat = re.compile(r'[\\\!\@\#\$\%\^\&\*\(\)\_\=\+]')
         empty = []
@@ -53,25 +51,19 @@ class cleanup(object):
         # tokensss=word_tokenize(text)
         return empty
     
-    @classmethod
-    def delete_all_symbol(cls, tokens):
-        ###don't delete "-", we have something like 3-form
-        empty=[]
-        pat = re.compile(r'[\\\!\@\#\$\%\^\&\*\(\)\_\=\+]')
-        for x in tokens:
-            if len(pat.findall(x)) == 0:
-                empty += [x.lower()]
-        return empty
+
+    
     
     def fit(self, text1, text2):
         return self
     
     def transform(self, text):
         text = cleanup.cancelmath(text)
-        tokens = cleanup.delete_stopword_mathsymbols(text)
-        tokens = cleanup.delete_double_digit(tokens)
+        
+        text = cleanup.delete_stopword_mathsymbols(text)
+        
         if self.stem_on:
-            tokens = cleanup.stem_words(tokens)
-        tokens = cleanup.delete_all_symbol(tokens)
-        text=" ".join(tokens)
+            tokens = cleanup.stem_words(text)
+    
+            text=" ".join(tokens)
         return text
