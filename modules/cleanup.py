@@ -30,7 +30,7 @@ class cleanup(object):
             if x.lower() in stop or len(x) <3 or x.isdigit() or ("\\" in x) or ("^" in x) or ("[" in x) or ("]" in x):
                 continue
             x=x.lower()
-            x=re.sub(r"[!@#$%^&*()_+=`~'\-\d]", "", x, 0, re.MULTILINE)
+            x=re.sub(r"[!@#$%^>&<*()_+=`~'\-\d]", " ", x, 0, re.MULTILINE)
             if x not in stop:
                 temp += [x]
     
